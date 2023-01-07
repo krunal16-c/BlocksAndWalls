@@ -8,6 +8,9 @@ public class PlayerSCript : MonoBehaviour
     void Start()
     {
      // This is a new line of comment.   
+     // Line2
+     // // Line 3
+     // Test like 4
     }
 
     // Update is called once per frame
