@@ -10,25 +10,63 @@ public class PlayerMovement : MonoBehaviour
         
     }
     
-    public float speed = 5.0f; 
+    public float speed = 3.0f; 
+    // Set this to the distance threshold at which the player stops
+    public float stopDistance = 0.1f;
+    public Vector3 mousePosition;
+    public Vector3 direction;
+    public Animator animator;
     
     // Update is called once per frame
     void Update()
-    {   
+    {
         if (Input.GetMouseButtonDown(0))
         {
             // Get the mouse position in world space
-            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mousePosition.z = 0;
 
-            // Calculate the direction the player should move
-            Vector2 direction = (Vector2)(mousePosition - transform.position);
-
-            // Normalize the direction to ensure consistent movement speed
-            direction = direction.normalized;
-
-            // Move the player in the specified direction
-            transform.position = transform.position + (Vector3) (direction * speed * Time.deltaTime);
+            direction = new Vector3(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y, 0).normalized;
         }
+        
+        
+        // Check the distance to the target position
+        float distance = Vector3.Distance(transform.position, mousePosition);
+
+        AnimateMovement(direction, distance);
+        
+
+        // If the distance is greater than the stop distance, move the player
+        if (distance > stopDistance)
+        {
+            transform.Translate(direction * speed * Time.deltaTime);
+        }
+        // Otherwise, stop the player
+        else
+        {
+            direction = Vector3.zero;
+        }
+        
+        void AnimateMovement(Vector3 direction, float distance)
+        {
+            // Debug.Log(animator);
+            if(animator != null)
+            {
+                // Debug.Log(distance);
+                if(distance > stopDistance)
+                {
+                    // Debug.Log(distance);
+                    animator.SetBool("isMoving", true);
+                    animator.SetFloat("Horizontal", direction.x);
+                    animator.SetFloat("Vertical", direction.y);
+                }
+                else
+                {
+                    animator.SetBool("isMoving", false); 
+                }
+            }
+        }
+        
     }
 }
+ 
